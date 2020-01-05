@@ -11,6 +11,13 @@ public class OrderDetails {
 	private String productName;
 	private int quantity;
 	private float unitPrice;
+	private int productID;
+	public int getProductID() {
+		return productID;
+	}
+	public void setProductID(int productID) {
+		this.productID = productID;
+	}
 	public int getOrder_id() {
 		return order_id;
 	}

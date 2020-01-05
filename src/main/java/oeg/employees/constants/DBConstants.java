@@ -19,5 +19,7 @@ public class DBConstants {
 	public static final String GET_ORDER_BY_ID = "select order_id,customer_id,status,salesman_id,order_date from orders where order_id = ?";
 	
 	public static final String GET_ORDER_DETAILS = "{call emp_pkg.GET_ORDER_DETAILS(?,?)}";
+	
+	public static final String GET_PRODUCT_DETAILS = "{call emp_pkg.GET_PRODUCT_DETAILS(?,?)}";
 
 }

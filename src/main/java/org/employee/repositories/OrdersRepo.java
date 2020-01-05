@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.employee.models.Order;
 import org.employee.models.OrderDetails;
+import org.employee.models.ProductDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
@@ -71,6 +72,7 @@ public class OrdersRepo {
 					order.setProductName(rs.getString(3));
 					order.setQuantity(rs.getInt(4));
 					order.setUnitPrice(rs.getFloat(5));
+					order.setProductID(rs.getInt(6));
 					ord.add(order);
 				}
 				return ord;
@@ -80,6 +82,39 @@ public class OrdersRepo {
 		return orders;
 	}
 	
+	
+	public ProductDetail getProductDetails(int productID) {
+		String sql = DBConstants.GET_PRODUCT_DETAILS;
+		ProductDetail productDetail = jdTemplate.execute(new CallableStatementCreator() {
+			
+			@Override
+			public CallableStatement createCallableStatement(Connection con) throws SQLException {
+				CallableStatement cs = con.prepareCall(sql);
+				cs.registerOutParameter(2, OracleTypes.CURSOR);
+				cs.setInt(1, productID);
+				return cs;
+			}
+		}, new CallableStatementCallback<ProductDetail>() {
+
+			@Override
+			public ProductDetail doInCallableStatement(CallableStatement cs) throws SQLException, DataAccessException {
+				cs.execute();
+				ProductDetail pD = new ProductDetail();
+				ResultSet rs = (ResultSet)cs.getObject(2);
+				while(rs.next()) {
+					pD.setProductId(rs.getInt(1));
+					pD.setProductName(rs.getString(2));
+					pD.setDescription(rs.getString(3));
+					pD.setsCost(rs.getFloat(4));
+					pD.setLprice(rs.getFloat(5));
+					pD.setCategory(rs.getString(6));
+				}
+				return pD;
+			}
+			
+		});
+		return productDetail;
+	}
 	
 	
 	

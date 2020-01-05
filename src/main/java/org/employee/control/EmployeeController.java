@@ -7,10 +7,12 @@ import org.employee.ResponseEntities.Employees;
 import org.employee.ResponseEntities.OrderDetailsList;
 import org.employee.ResponseEntities.OrderResponse;
 import org.employee.ResponseEntities.OrdersResponse;
+import org.employee.ResponseEntities.ProductDetailResponse;
 import org.employee.Utils.EmployeeUtils;
 import org.employee.models.Employee;
 import org.employee.models.Order;
 import org.employee.models.OrderDetails;
+import org.employee.models.ProductDetail;
 import org.employee.repositories.EmployeeRepo;
 import org.employee.repositories.OrdersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,20 @@ public class EmployeeController {
 		}
 		return new ResponseEntity(order,HttpStatus.OK);
 	}
+	
+	@RequestMapping("/getProductDetails/{pid}")
+	public ResponseEntity<ProductDetailResponse> getProductDetails(@PathVariable(value="pid") int productID) {
+		ProductDetailResponse productResponse = new ProductDetailResponse();
+		ProductDetail pD = ordersDAO.getProductDetails(productID);
+		if(pD!=null) {
+			productResponse.setProduct(pD);
+			emputils.successMessage(productResponse);
+		}else {
+			emputils.failureMessage(productResponse);
+		}
+		return new ResponseEntity(productResponse,HttpStatus.OK);
+	}
+	
 	
 	@RequestMapping("/getOrderById/{id}")
 	public ResponseEntity<OrderDetailsList> getOrderDetailsById(@PathVariable(value="id") int order_id) {
