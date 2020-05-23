@@ -1,6 +1,35 @@
 This repository server as backend service for EMS_frontEND code.
 The database used to develop is Oracle 12c
 Data usedis as part of Oracle sample Data.
+
+Sample Database Link:
+https://www.oracletutorial.com/getting-started/oracle-sample-database/
+
+Kinldy create below tables for user login details:
+
+
+create table user_details_login ( user_id number(8) not null, email_id varchar2(35) not null, emp_id varchar2(35) not null, last_login date);
+create table user_pass_login (user_id number(8), pass_key varchar2 (25));
+create table user_session(user_id number(8), token varchar2(35), session_start_time date);
+
+alter table user_details_login add primary key (user_id);
+
+
+
+
+
+alter table user_pass_login add foreign key (user_id) references user_details_login(user_id)
+alter table user_session add foreign key (user_id) references user_details_login(user_id)
+
+commit;
+
+
+INSERT
+----------------------------------------------------------------
+insert into user_details_login values (1,'test@abc','v123',null)
+insert into user_pass_login values (1,'admin')
+
+
  Below is the package which was created :
  
  Package Spec:
