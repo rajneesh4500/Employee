@@ -5,13 +5,16 @@ Data usedis as part of Oracle sample Data.
  
  Package Spec:
  create or replace 
-  package EMP_PKG
+package EMP_PKG
   AS
   PROCEDURE GET_ALL_EMP(p_recordset OUT sys_refcursor);
   PROCEDURE GET_EMP_ID(i_employeeID IN NUMBER,
                       p_recordset OUT sys_refcursor);
   PROCEDURE GET_ORDER_DETAILS(i_orderid IN NUMBER,
                             p_recordset OUT sys_refcursor);
+                            
+  PROCEDURE VALIDATE_USER(i_pass IN VARCHAR2,i_user_id IN number, 
+                            p_token OUT varchar2);
   END EMP_PKG;
   
  --------------------------------------------------------------------
@@ -66,4 +69,32 @@ BEGIN
                 on oe.product_id = p.product_id
                 where oe.order_id = i_orderid;
 END;
+
+
+PROCEDURE VALIDATE_USER(i_pass IN VARCHAR2,i_user_id IN number, 
+                            p_token OUT varchar2)
+IS
+count_user number;
+BEGIN
+ select count(user_id) into count_user 
+    from vrajnees.user_pass_login 
+      where user_id = i_user_id and pass_key = i_pass;
+      
+  IF count_user > 0
+  THEN
+    SELECT DBMS_RANDOM.STRING('A', 20) into p_token FROM DUAL;
+       
+    MERGE into user_session aa 
+      using (select i_user_id as user_id from dual) b 
+        on (aa.user_id = b.user_id) 
+        when matched then
+          update set session_start_time = sysdate,token = p_token
+        when not matched then
+        insert(user_id,token,session_start_time) values (i_user_id,p_token ,sysdate);
+  END IF;
+END;
+
+
+
+
 END EMP_PKG;
